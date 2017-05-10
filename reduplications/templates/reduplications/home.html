@@ -1,0 +1,87 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=1%}
+
+
+{{ formset.media.css }}
+{{ formset.media.js }}
+
+<div>
+	Click <a href='http://0.0.0.0:8000/admin/reduplications/reduplicationtype/' target="_blank"> Here </a> To see, add and edit types.
+</div>
+{{ formset.errors }}
+{{ formset.non_field_errors }}
+
+
+
+
+<table class="table">
+<tr> 
+	{% for field in searchform.visible_fields %}
+            <td> {{ field.label_tag }} <span style='width:200px !important'> {{ field }} </span>
+			<button type="button" class="btn" id='search'>Search</button>
+            </td>
+    {% endfor %}
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    		$('.select2-container')[0].style.width = "200px";
+    	});
+    	$('#search').click(function() {
+    		document.location = '/app/r/' + $('#id_reduplication')[0].value + "/" ;
+    	})
+    </script>
+    
+</tr>
+</table>
+
+
+
+<form class='form' action="/app/{{page_id}}" method="post">
+    {% csrf_token %}
+    <a href="/app/{{page_id}}">Next</a>
+    <a href="/app/{{prev_id}}">Previous</a>
+    {{ formset.management_form }}
+    <table class='table'>
+    	<th>Reduplication</th>
+    	<th>Frequency</th>
+    	<th>Examples</th>
+    	<th>Category</th>
+    	<th>Select Types</th>
+    {% for form in formset %}
+        <tr>
+        <td> <a href="/app/r/{{ form.instance.pk }}?page_id={{page_id}}"> {{ form.instance.token}} </a> </td>
+        <td> {{ form.instance.frequency}} </td>
+        <td>
+        <ul class="list-group">
+       	{% for example in form.instance.example_docs %}
+       		<li class="list-group-item"> 
+       			{% for word in example %} 
+       				{% if word|slice:":1" == '@' %}
+       				 <span class='label label-danger'>{{ word }}</span>
+       				{% else %}
+       				 {{ word }}
+       				{% endif %}
+       			{% endfor %}
+       		</li>
+        {% endfor %}
+        </ul>
+
+
+        </td>
+        {% for field in form.visible_fields %}
+            <td> {{ field.label_tag }} {{ field }} </td>
+        {% endfor %}
+		{% for hidden in form.hidden_fields %}
+    		{{ hidden }}
+		{% endfor %}        
+        </tr>
+    {% endfor %}
+    </table>
+    <a href="/app/{{page_id}}">Next</a>
+    <input type="submit" value="Submit" class="btn" />
+    
+</form>
+

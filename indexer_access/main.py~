@@ -1,0 +1,35 @@
+
+from bottle import route, run, template
+import sys
+from indexer import Indexer
+import json
+
+source_file = sys.argv[1]
+index_file = sys.argv[2]
+idxr = Indexer(source_file, index_file)
+i = idxr.__enter__()
+
+def get_line(line_num):
+    line = None
+    line =  i.read(line_num)
+    return line
+
+
+
+
+@route('/<line_num>')
+def index(line_num):
+    return get_line(int(line_num))
+
+
+@route('/m/<line_nums>')
+def index(line_nums):
+    sents = []
+    for line_num in line_nums.split(";"):
+        sents.append(get_line(int(line_num)))
+    return json.dumps(sents)
+
+
+
+
+run(host='localhost', port=8080)

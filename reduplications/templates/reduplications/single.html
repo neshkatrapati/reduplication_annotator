@@ -1,0 +1,66 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=1%}
+
+
+{{ form.media.css }}
+{{ form.media.js }}
+
+<div>
+  Click <a href='http://0.0.0.0:8000/app/{{page_id}}'> Here </a> To go back.
+</div>
+
+<div>
+	Click <a href='http://0.0.0.0:8000/admin/reduplications/reduplicationtype/' target="_blank"> Here </a> To see, add and edit types.
+</div>
+
+
+
+<form action="/app/r/{{redup_id}}/" method="post">
+    {% csrf_token %}
+    <table class='table'>
+    	<th>Reduplication</th>
+    	<th>Frequency</th>
+    	
+    	<th>Category</th>
+    	<th>Select Types</th>
+      <th></th>
+        <tr>
+        <td> {{ form.instance.token}} </td>
+        <td> {{ form.instance.frequency}} </td>
+        
+        {% for field in form.visible_fields %}
+            <td> {{ field.label_tag }} {{ field }} </td>
+        {% endfor %}
+		{% for hidden in form.hidden_fields %}
+    		{{ hidden }}
+		{% endfor %}        
+    <td><input type="submit" value="Submit" class="btn" /></td>
+        </tr>
+    
+        </table>
+<ul class="list-group">
+        {% for example in form.instance.example_docs %}
+          <li class="list-group-item">
+            {{forloop.counter}} .
+            {% for word in example %}             
+              {% if word|slice:":1" == '@' %}
+               <span class='label label-danger'>{{ word }}</span>
+              {% else %}
+               {{ word }}
+              {% endif %}
+            {% endfor %}
+          </li>
+        {% endfor %}
+        </ul>
+        
+
+
+    
+    
+    
+</form>
+
